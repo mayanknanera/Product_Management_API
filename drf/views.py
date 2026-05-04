@@ -16,15 +16,15 @@ from rest_framework.exceptions import NotFound
 #     serializer = ProductSerializer(products, many=True)
 #     return Response(serializer.data)
 
-@api_view(["GET"])
-def get_product(req, pk):
-    try:
-        product = Product.objects.get(id=pk)
-    except Product.DoesNotExist:
-        raise NotFound("Product not found")
+# @api_view(["GET"])
+# def get_product(req, pk):
+#     try:
+#         product = Product.objects.get(id=pk)
+#     except Product.DoesNotExist:
+#         raise NotFound("Product not found")
     
-    serializer = ProductSerializer(product)
-    return Response(serializer.data)
+#     serializer = ProductSerializer(product)
+#     return Response(serializer.data)
 
 # @api_view(["POST"])
 # def create_products(req):
@@ -50,34 +50,55 @@ def get_product(req, pk):
 #     product.delete()
 #     return Response({"msg:Product Delete Successful!"})
 
-# class ProductAPI(APIView):
+class ProductAPI(APIView):
 
-#     authentication_classes=[TokenAuthentication]
-#     permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
-#     def get(self, req):
-#         products = Product.objects.all()
-#         serializer = ProductSerializer(products, many=True)
-#         return Response(serializer.data)
-    
-#     def post(self, req):
-#         serializer = ProductSerializer(data=req.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=201)
-#         return Response(serializer.errors, status=400)
+    def get(self, req):
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+
+    def post(self, req):
+        serializer = ProductSerializer(data=req.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+    def put(self, req, pk):
+        product = get_object_or_404(Product, id=pk)
+        serializer = ProductSerializer(product, data=req.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    def patch(self, req, pk):
+        product = get_object_or_404(Product, id=pk)
+        serializer = ProductSerializer(product, data=req.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    def delete(self, req, pk):
+        product = get_object_or_404(Product, id=pk)
+        product.delete()
+        return Response({"msg": "Product deleted successfully!"}, status=204)
 
 # class ProductViewSet(ModelViewSet):
 #     queryset = Product.objects.all()
 #     serializer_class = ProductSerializer
 
-class FilterProduct(ListAPIView):
-    serializer_class = ProductSerializer
+# class FilterProduct(ListAPIView):
+#     serializer_class = ProductSerializer
 
-    def get_queryset(self):
-        price = self.request.query_params.get('price')
-        return Product.objects.filter(price=price)
+#     def get_queryset(self):
+#         price = self.request.query_params.get('price')
+#         return Product.objects.filter(price=price)
 
-class ProductListCreate(ListCreateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+# class ProductListCreate(ListCreateAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer

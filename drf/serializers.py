@@ -11,6 +11,11 @@ class ProductSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Price must be positive")
         return value
 
+    def validate_stock(self, value):
+        if value < 0:
+            raise serializers.ValidationError("Stock cannot be negative")
+        return value
+
     def create(self, validated_data):
         validated_data['name'] = validated_data['name'].upper()
         return super().create(validated_data)

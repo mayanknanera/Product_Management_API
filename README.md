@@ -1,73 +1,62 @@
-# Product Management API
+# 🛒 Product Management API
 
-A small Django REST Framework project for managing products with a simple API.
+> A REST API built with **Django** & **Django REST Framework** for managing products with full CRUD and token-based authentication.
 
-## Overview
+---
 
-This project provides a `Product` model with:
+## 🚀 Tech Stack
 
-- `name` (string)
-- `price` (integer)
+| Layer | Technology |
+|---|---|
+| Framework | ![Django](https://img.shields.io/badge/Django-6.0.1-green) |
+| API | ![DRF](https://img.shields.io/badge/DRF-3.17.1-red) |
+| Auth | Token Authentication |
+| Database | SQLite |
 
-The API supports listing products and creating new products via the `/drf/products/` endpoint.
+---
 
-## Features
+## 🔐 Authentication
 
-- Django 6.0.1
-- Django REST Framework 3.17.1
-- `ListCreateAPIView` for product listing and creation
-- Validation ensures `price` is positive
-- Product names are converted to uppercase on creation
-- SQLite database included by default (`db.sqlite3`)
+All endpoints require a token in the request header.
 
-## Installation
-
-```bash
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-python manage.py migrate
+```
+Authorization: Token <your_token>
 ```
 
-## Running locally
+### Obtain Token
 
-```bash
-python manage.py runserver
-```
-
-Then open `http://127.0.0.1:8000/` and use the API endpoints below.
-
-## API Endpoints
-
-- `GET /drf/products/` - list all products
-- `POST /drf/products/` - create a new product
-
-### Sample request body for creating a product
+**`POST`** `/drf/token/`
 
 ```json
-{
-  "name": "Keyboard",
-  "price": 150
-}
+{ "username": "your_username", "password": "your_password" }
 ```
 
-### Validation
+---
 
-- `price` must be greater than zero
-- `name` is stored as uppercase when created
+## 📦 API Endpoints
 
-## Optional endpoints
+### Base URL
 
-- `POST /drf/token/` - obtain auth token (DRF token authentication endpoint included)
+```
+http://127.0.0.1:8000/drf/
+```
 
-## Project structure
+| Method | URL | Description |
+|---|---|---|
+| `GET` | `/products/` | List all products |
+| `POST` | `/products/` | Create a new product |
+| `PUT` | `/products/<id>/` | Full update a product |
+| `PATCH` | `/products/<id>/` | Partial update a product |
+| `DELETE` | `/products/<id>/` | Delete a product |
 
-- `config/` - Django project settings and URL configuration
-- `drf/` - main application with models, views, serializers, and URLs
-- `db.sqlite3` - SQLite database file
-- `requirements.txt` - project dependencies
+> Paginated — default page size is **5**. Use `?page=2` to navigate.
 
-## Notes
+---
 
-- The current API implementation uses `ListCreateAPIView` for product listing and creation.
-- Additional functionality such as detail, update, and delete endpoints are present in commented code within `drf/views.py` for future expansion.
+## ✅ Validation Rules
+
+| Field | Rule |
+|---|---|
+| `price` | Must be **greater than 0** |
+| `stock` | Cannot be **negative** |
+| `name` | Auto-converted to **UPPERCASE** on create |
